@@ -46,7 +46,7 @@ export default function Login() {
         zIndex: 2, // Ensure it's above the overlay text
         width: '100vw',
         height: '100vh',
-        padding: '50vh 50vh',
+        padding: '30vh 35vw',
         backgroundImage: 'radial-gradient(rgba(255,255,255,1) 14%, rgba(0,0,0,0) 76%)',
         borderRadius: '8px',
     };
@@ -58,19 +58,36 @@ export default function Login() {
         backgroundBlendMode: 'overlay',
         zIndex: 1
     };
-    const usernameBox = {
+    const inputBox = {
         width: '100%',
         height: '50px',
         fontSize: '20px',
         marginBottom: '20px',
         padding: '10px',
-        borderRadius: '8px',
         border: 'none',
+        borderBottom: '2px solid #000',
         outline: 'none',
         background: 'transparent',
         fontFamily: 'Inter',
+        color: 'black'
     };
+    const inputPassword = {
+        width: '70%',
+        marginLeft: '10%',
+    }
 
+    const button = {
+        width: '10%',
+        height: '50%',
+        alignSelf: 'center',
+        color: 'black'
+    }
+    React.useEffect(() => {
+        if (document.cookie !== "") {
+            window.location.replace('/');
+        }
+      }, []);
+    
     return (
         <div style={containerStyle}>
             {/* Overlay text divs */}
@@ -89,32 +106,37 @@ export default function Login() {
             ))}
             {/* Login form */}
             <div style={formStyle}>
-                <input type="text" id="username" placeholder="Username" style={usernameBox}/>
-                <input type="password" id="password" placeholder="Password" />
-                <button
-                    onClick={async () => {
-                        let username = (document.getElementById("username") as HTMLInputElement).value;
-                        let password = (document.getElementById("password") as HTMLInputElement).value;
-                        let r = await fetch("/api/login", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({  
-                                username: username,
-                                password: password,
-                            }),
-                        });
-                        let t = await r.json();
-                        if (t.message === "Logged in") {
-                            alert("Logged in");
-                        } else {
-                            alert(t.message);
-                        }
-                    }}
-                >
-                    Login
-                </button>
+                <h1 style={{ fontFamily: 'Inria Serif', color: 'black', textAlign: 'center', fontSize: "5vh" }}>Login</h1>
+                <input type="text" id="username" placeholder="Username" style={inputBox}/>
+                <div style={{display:'flex', alignContent:'center'}}>
+                    <input type="password" id="password" placeholder="Password" style={inputBox}/>
+                    <button
+                    style={button}
+                        
+                        onClick={async () => {
+                            let username = (document.getElementById("username") as HTMLInputElement).value;
+                            let password = (document.getElementById("password") as HTMLInputElement).value;
+                            let r = await fetch("/api/login", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({  
+                                    username: username,
+                                    password: password,
+                                }),
+                            });
+                            let t = await r.json();
+                            if (t.message === "Logged in") {
+                                window.location.href = "/";
+                            } else {
+                                alert(t.message);
+                            }
+                        }}
+                    >
+                        Login
+                    </button>
+                </div>
             </div>
         </div>
     );

@@ -16,9 +16,14 @@ function TimeTill(d : Date){
     return days + " days and " + hours + " hours until test";
 }
 export default function ClassComp() {
-    const id = useRouter().query.id as string;
+    const r = useRouter();
+    const id = r.query.id as string
     const [Class, setClass] = useState(null as null | Class & {tests: Test[]} & {Notes: Notes[]});
     useEffect(() => {
+        console.log(id);    
+        if (!id) {
+            return;
+        }
         fetch("/api/logged/getclass", {
             method: "POST",
             headers: {
@@ -30,7 +35,7 @@ export default function ClassComp() {
             .then((data) => {
                 setClass(data.class);
             });
-    }, []);
+    }, [id]);
     return ( <>
     {Class?.name}
     <h2>Tests</h2>

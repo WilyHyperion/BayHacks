@@ -10,9 +10,10 @@ export default async function handler(
   let id = req.body.id;
   console.log("user", user);
   if (user) {
-    console.log(req.body);
-    console.log(user);
-    let note = await Prisma.notes.findMany({
+    console.log(id, 'id ');
+    console.log(req.body, 'user id')
+    console.log('ranningns')
+    let note = await Prisma.notes.findFirst({
       where: {
         AND: [
           { id: id },
@@ -34,6 +35,6 @@ export default async function handler(
       },
     });
     console.log(note);
-    res.status(200).json({ message: "Notes found", notes: note[0] });
+    res.status(200).json({ message: "Notes found", notes: note });
   }
 }

@@ -1,47 +1,154 @@
 import { Class, User } from '@prisma/client';
-import React from 'react';
+import { Inria_Serif, Inter } from 'next/font/google';
+import React, { useState, useEffect, useRef } from 'react';
+
+// Apply the Inria Serif font with a specific weight
+const inriaSerif = Inria_Serif({
+    subsets: ['latin'],
+    weight: '400', // Specify the weight here
+});
+
+// Apply the Inter font
+const inter = Inter({
+    subsets: ['latin'],
+    weight: '400', // Specify the weight here
+});
 
 export default function Home() {
-    const [user, setUser] = React.useState({
-        
-    } as User & { classes: Class[] });
-    React.useEffect(() => {
-        fetch('/api/getuser').then(res => res.json()).then(data => {
+    const [user, setUser] = useState<User & { classes: Class[] }>({} as User & { classes: Class[] });
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const res = await fetch('/api/getuser');
+            const data = await res.json();
             setUser(data.user);
-        });
+        };
+        fetchUser();
     }, []);
+
+    const titleRef = useRef<HTMLInputElement>(null);
+    const textRef = useRef<HTMLTextAreaElement>(null);
+    const classRef = useRef<HTMLSelectElement>(null);
+
+    const handleAddNote = async () => {
+        const title = titleRef.current?.value || '';
+        const text = textRef.current?.value || '';
+        const classId = classRef.current?.value || '';
+
+        const response = await fetch("/api/logged/addnote", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title,
+                text,
+                classId,
+            }),
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            window.location.href = `/logged/note/${result.id}`;
+        }
+    };
+
     return (
-        <div>
-        <h1>Add Note</h1>
-        {user.name}
-        <input type="text" id = "title" placeholder="Title" />
-        <textarea id = "text" placeholder="Content" />
-        <select id = "class">
-            {user?.classes?.map((c) => {
-                return (
-                    <option key={c.Id} value={c.Id}>{c.name}</option>
-                );
-            })}
-        </select>
-        <button onClick={async () => {
-            let title = (document.getElementById("title") as HTMLInputElement).value;
-            let text = (document.getElementById("text") as HTMLTextAreaElement).value;
-            let r = await fetch("/api/logged/addnote", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    title: title,
-                    text: text,
-                    classId: (document.getElementById("class") as HTMLSelectElement).value,
-                }),
-            })
-            let t = await r.json();
-            if(t.id) {
-                window.location.href = "/logged/note/" + t.id;  
-            }
-        }}>Add Note</button>
+        <div style={{ 
+            position: 'relative', 
+            minHeight: '100vh', 
+            fontFamily: inriaSerif.style.fontFamily, // Apply the Inria Serif font
+            padding: '2vw', // Add padding around the container
+            backgroundColor: 'white'
+        }}>
+            
+            <div style={{ 
+                maxWidth: '80vw', 
+                margin: 'auto', 
+                textAlign: 'center', 
+                color: 'black' 
+            }}>
+                <h1 style={{ fontSize: '8vh', marginBottom: '2vh' }}>Add Note, {user.name}</h1>
+                <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center' // Center the form elements horizontally
+                }}>
+                    <select
+                        id="class"
+                        ref={classRef}
+                        style={{ 
+                            width: '60vw', 
+                            padding: '1vw', 
+                            fontFamily: inter.style.fontFamily, // Apply Inter font
+                            color: 'black', 
+                            backgroundColor: 'white', 
+                            outline: 'none', // Remove default outline
+                            marginBottom: '2vh' // Add space below the dropdown
+                        }}
+                    >
+                        {user.classes?.map((c) => (
+                            <option key={c.Id} value={c.Id}>
+                                {c.name}
+                            </option>
+                        ))}
+                    </select>
+                    <input
+                        type="text"
+                        id="title"
+                        ref={titleRef}
+                        placeholder="Title"
+                        style={{ 
+                            width: '60vw', 
+                            padding: '1vw', 
+                            fontSize: '4vh', // Increase font size here
+                            fontFamily: inter.style.fontFamily, // Apply Inter font
+                            color: 'black', 
+                            backgroundColor: 'transparent', 
+                            borderBottom: '3px solid black', 
+                            outline: 'none', // Remove default outline
+                            marginBottom: '0' // Add space below the input
+                        }}
+                    />
+                    <textarea
+                        id="text"
+                        ref={textRef}
+                        placeholder="Content"
+                        style={{ 
+                            width: '60vw', 
+                            padding: '1vw', 
+                            minHeight: '20vh', 
+                            fontFamily: inter.style.fontFamily, // Apply Inter font
+                            color: 'black', 
+                            backgroundColor: '#f0f0f0', 
+                            border: '1px solid #ccc', 
+                            borderRadius: '1vw',
+                            borderTopLeftRadius: '0',
+                            borderTopRightRadius: '0',
+                            borderTop: 'none', // Remove top border
+                            outline: 'none',
+                            marginBottom: '2vh' // Add space below the textarea 
+                        }}
+                    />
+                    
+                    <button
+                        onClick={handleAddNote}
+                        style={{ 
+                            width: '10vw', // Fixed width for the button
+                            padding: '0.5vw 1vw', // Adjusted padding
+                            fontFamily: inter.style.fontFamily, // Apply Inter font
+                            backgroundColor: '#808080', // Grayish color
+                            color: '#fff', 
+                            border: 'none', 
+                            borderRadius: '0.5vw', 
+                            cursor: 'pointer', 
+                            margin: 'auto' // Center the button
+                        }}
+                    >
+                        Add Note
+                    </button>
+                </div>
+            </div>
         </div>
     );
-    }
+}

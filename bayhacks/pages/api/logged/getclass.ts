@@ -10,9 +10,18 @@ export  default async function handler(
   ) {
     let user = await getuser(req, true);
     let id = req.body.id;
+    console.log(id, 'user');
     if(user) {
-        let classobj = (user as any).classes.find((c: any) => c.id == id);
-        console.log(classobj);
-        res.status(200).json({ message: "Class found", class: classobj });
+      let classs = await Prisma.class.findFirst({
+        where: {
+          Id: id,
+        },
+        include: {
+          tests: true,
+          Notes: true
+        }
+        
+      });
+      res.status(200).json({ message: "Class found", class: classs });
     }
   }

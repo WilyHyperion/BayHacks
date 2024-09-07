@@ -5,15 +5,15 @@ import getuser from "@/lib/getuser";
 export default async function handler(req:NextApiRequest, res:NextApiResponse) {
     let user = await getuser(req);
     if(user) {
-        console.log(req.body);
         let classobj = await Prisma.class.findFirst({
             where: {
                 AND: [
-                    {name: req.body.classname},
+                    {Id: req.body.classid},
                     {userId: user.id}
                 ]
             }
         });
+        console.log(req.body);
         await Prisma.test.create({
             data: {
                 name: req.body.name,
@@ -32,4 +32,5 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
             }
         });
     }
+    res.status(200).json({message: "Test added"});
 }
