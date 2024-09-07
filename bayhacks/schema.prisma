@@ -1,0 +1,49 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+    directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+    id       String     @id @default(cuid())
+    email    String  @unique
+    name     String?
+    password String
+    salt     String
+    notes    Notes[]
+    shared   Notes[] @relation("SharedWith")
+    classes  Class[]
+    tests  Test[]
+}
+
+model Notes {
+    id       String     @id @default(cuid())
+    title    String
+    content  String
+    author   User    @relation(fields: [authorId], references: [id])
+    authorId String
+    shared  User[]  @relation("SharedWith")
+    Class   Class?   @relation(fields: [classId], references: [Id])
+    classId String?
+}
+model Test {
+    id       String     @id @default(cuid())
+    testDate DateTime
+    classID  String
+    class    Class     @relation(fields: [classID], references: [Id])
+    user    User      @relation(fields: [userId], references: [id])
+    userId  String
+    name     String
+}
+model Class {
+    Id    String @id @default(cuid())
+    name  String
+    tests Test[]
+    user User @relation(fields: [userId], references: [id])
+    userId String
+    Notes Notes[]
+}
