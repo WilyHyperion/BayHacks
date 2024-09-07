@@ -39,9 +39,9 @@ export default function Home() {
 
                 {/* Classes and Tests List */}
                 <div style={{ textAlign: 'center', marginBottom: '2vh' }}>
-                    <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                    <ul style={{ listStyleType: 'none', display: 'flex', flexDirection: 'row', justifyContent: 'center', background: "" }}>
                         {user?.classes?.map((c) => (
-                            <li key={c.Id} style={{ marginBottom: '1vh' }}>
+                            <li key={c.Id} style={{ marginBottom: '1vh', marginLeft: '2vw'}}>
                                 <p
                                     onClick={() => { window.location.href = "/logged/class/" + c.Id; }}
                                     style={{ cursor: 'pointer', fontSize: '4vh' }}

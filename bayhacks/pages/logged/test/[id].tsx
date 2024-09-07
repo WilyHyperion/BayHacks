@@ -115,7 +115,7 @@ export default function Test() {
           <div>
           {studyPlan.studyplan.map((s: any, index:number) => {
             return (
-            <><div className="overflow-y-scroll max-h-[100vh] bg-[#D9D9D9] rounded-[500px]">
+            <><div className="overflow-y-scroll max-h-[100vh] bg-[#D9D9D9] rounded-[50px] p-10">
                 <h2 className="text-2xl">Topic {index + 1}: { s.topic}</h2>
                 <Markdown children={s.guide} ></Markdown>
                 
